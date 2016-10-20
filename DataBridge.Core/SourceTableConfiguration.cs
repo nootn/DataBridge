@@ -1,8 +1,8 @@
 ﻿namespace DataBridge.Core
 {
-    public class TableConfiguration
+    public class SourceTableConfiguration
     {
-        public TableConfiguration(string schemaName, string tableName, TableSyncSettings syncSettings)
+        public SourceTableConfiguration(string schemaName, string tableName, TableSyncSettings syncSettings)
         {
             SchemaName = schemaName;
             TableName = tableName;
@@ -14,5 +14,7 @@
         public string TableName { get; }
 
         public TableSyncSettings SyncSettings { get; }
+
+        public string TableId => string.Concat(SchemaName, ".", TableName);
     }
 }

@@ -8,11 +8,15 @@
             Polling = 2
         }
 
-        public TableSyncSettings(ChangeDetectionModes changeDetectionMode, uint pollIntervalInMilliseconds, uint qualityCheckIntervalInMilliseconds)
+        public TableSyncSettings(ChangeDetectionModes changeDetectionMode, 
+            uint pollIntervalInMilliseconds, 
+            uint qualityCheckIntervalInMilliseconds,
+            uint qualityCheckRecordBatchSize)
         {
             ChangeDetectionMode = changeDetectionMode;
             PollIntervalInMilliseconds = pollIntervalInMilliseconds;
             QualityCheckIntervalInMilliseconds = qualityCheckIntervalInMilliseconds;
+            QualityCheckRecordBatchSize = qualityCheckRecordBatchSize;
         }
 
         public ChangeDetectionModes ChangeDetectionMode { get; }
@@ -20,5 +24,7 @@
         public uint PollIntervalInMilliseconds { get; }
 
         public uint QualityCheckIntervalInMilliseconds { get; }
+
+        public uint QualityCheckRecordBatchSize { get; }
     }
 }

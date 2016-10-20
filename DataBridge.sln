@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBridge.Core", "DataBridge.Core\DataBridge.Core.csproj", "{7F3441D7-4F57-4F9D-9977-F643B5224F0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBridge.SqlServer", "DataBridge.SqlServer\DataBridge.SqlServer.csproj", "{8902A16F-877E-405F-BBB7-C9A1A3F7B181}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7F3441D7-4F57-4F9D-9977-F643B5224F0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F3441D7-4F57-4F9D-9977-F643B5224F0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F3441D7-4F57-4F9D-9977-F643B5224F0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8902A16F-877E-405F-BBB7-C9A1A3F7B181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8902A16F-877E-405F-BBB7-C9A1A3F7B181}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8902A16F-877E-405F-BBB7-C9A1A3F7B181}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8902A16F-877E-405F-BBB7-C9A1A3F7B181}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
