@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DataBridge.Core;
-using DataBridge.SqlServer.Configuration;
+using DataBridge.SqlServer.Interface;
 using Serilog;
 
 namespace DataBridge.SqlServer
 {
     public class SqlServerSourceDatabase : SourceDatabaseBase
     {
-        private readonly SqlServerSourceConfigSection _config;
+        private readonly ISqlServerSource _config;
 
-        public SqlServerSourceDatabase(ILogger log, SqlServerSourceConfigSection config)
+        public SqlServerSourceDatabase(ILogger log, ISqlServerSource config)
         {
             _config = config;
             Log = log;
@@ -22,11 +21,12 @@ namespace DataBridge.SqlServer
         {
             var config = new List<SourceTableConfiguration>();
 
-            foreach (SqlServerSourceTableConfigElement configSourceTable in _config.SourceTables)
+            foreach (var configSourceTable in _config.SourceTables)
             {
-                config.Add(new SourceTableConfiguration(configSourceTable.Schema, 
+                config.Add(new SourceTableConfiguration(configSourceTable.Schema,
                     configSourceTable.Name,
-                    new TableSyncSettings((TableSyncSettings.ChangeDetectionModes)configSourceTable.ChangeDetectionMode,
+                    new TableSyncSettings(
+                        (TableSyncSettings.ChangeDetectionModes) configSourceTable.ChangeDetectionMode,
                         configSourceTable.PollIntervalInMilliseconds,
                         configSourceTable.QualityCheckIntervalInMilliseconds,
                         configSourceTable.QualityCheckRecordBatchSize)));
@@ -37,17 +37,14 @@ namespace DataBridge.SqlServer
 
         public override void EnsureChangeTrackingIsConfigured()
         {
-            
         }
 
         public override void CommenceChangeTracking(IEnumerable<SourceTableConfiguration> tables)
         {
-            
         }
 
         public override void RunQualityCheck(SourceTableConfiguration table)
         {
-            
         }
     }
 }

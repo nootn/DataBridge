@@ -13,6 +13,9 @@ namespace DataBridge.Core
 
         public abstract ILogger Log { get; }
 
+        public static readonly string ExceptionMessageNoTablesConfiguredPrefix =
+            "There were no tables to configure - nothing to do!  Please configure some tables in GetTableConfig()";
+
         public void Process()
         {
             Log.Debug("Starting Process()");
@@ -26,8 +29,7 @@ namespace DataBridge.Core
 
             if (tables == null || !tables.Any())
             {
-                throw new ApplicationException(
-                    "There were no tables to configure - nothing to do!  Please configure some tables in GetTableConfig()");
+                throw new ApplicationException(ExceptionMessageNoTablesConfiguredPrefix);
             }
             Log.Debug("Processing table(s) {@Tables}", tables);
 

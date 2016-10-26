@@ -1,8 +1,9 @@
 ﻿using System.Configuration;
+using DataBridge.SqlServer.Interface;
 
 namespace DataBridge.SqlServer.Configuration
 {
-    public class SqlServerSourceConfigSection : ConfigurationSection
+    public class SqlServerSourceConfigSection : ConfigurationSection, ISqlServerSource
     {
         [ConfigurationProperty("SourceDatabaseConnectionString", IsRequired = true)]
         public SqlDatabaseConnectionStringConfigElement SourceDatabaseConnectionString
@@ -17,5 +18,9 @@ namespace DataBridge.SqlServer.Configuration
             get { return (SqlServerSourceTableCollection) this["SourceTables"]; }
             set { this["SourceTables"] = value; }
         }
+
+        ISqlDatabaseConnectionString ISqlServerSource.SourceDatabaseConnectionString => SourceDatabaseConnectionString;
+
+        ISqlServerSourceTableCollection ISqlServerSource.SourceTables => SourceTables;
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System.Configuration;
+using DataBridge.SqlServer.Interface;
 
 namespace DataBridge.SqlServer.Configuration
 {
-    public class SqlServerSourceTableConfigElement : ConfigurationElement
+    public class SqlServerSourceTableConfigElement : ConfigurationElement, ISqlServerSourceTable
     {
         [ConfigurationProperty("id", IsKey = true, IsRequired = true)]
         public string Id
