@@ -9,29 +9,29 @@ namespace DataBridge.Core
 {
     public abstract class SourceDatabaseBase
     {
+        public static readonly string ExceptionMessageNoTablesConfiguredPrefix =
+            "There were no tables to configure - nothing to do!  Please configure some tables in GetTableConfig()";
+
         private readonly Dictionary<string, Timer> _tableQualityCheckTimers = new Dictionary<string, Timer>();
 
         public abstract ILogger Log { get; }
-
-        public static readonly string ExceptionMessageNoTablesConfiguredPrefix =
-            "There were no tables to configure - nothing to do!  Please configure some tables in GetTableConfig()";
 
         public void Process()
         {
             Log.Debug("Starting Process()");
 
-            using (Log.BeginTimedOperation("Ensure Change Tracking Is Configured", level: LogEventLevel.Debug))
-            {
-                EnsureChangeTrackingIsConfigured();
-            }
-            
             var tables = GetTableConfig();
+            Log.Debug("Processing table(s) {@Tables}", tables);
 
-            if (tables == null || !tables.Any())
+            if ((tables == null) || !tables.Any())
             {
                 throw new ApplicationException(ExceptionMessageNoTablesConfiguredPrefix);
             }
-            Log.Debug("Processing table(s) {@Tables}", tables);
+
+            using (Log.BeginTimedOperation("Ensure Change Tracking Is Configured", level: LogEventLevel.Debug))
+            {
+                EnsureChangeTrackingIsConfigured(tables);
+            }
 
             //Start processing changes now!
             using (Log.BeginTimedOperation("Commence Tracking Changes", level: LogEventLevel.Debug))
@@ -55,18 +55,20 @@ namespace DataBridge.Core
             var table = tableConfig as SourceTableConfiguration;
             if (table != null)
             {
-                using (Log.BeginTimedOperation("Performing quality check", identifier: table.TableId, level: LogEventLevel.Debug))
+                using (Log.BeginTimedOperation("Performing quality check", table.TableId, LogEventLevel.Debug))
                 {
                     RunQualityCheck(table);
                 }
-                RunQualityCheck(table);
             }
-            Log.Warning("Quality check timer elapsed but object passed could not be processed: {@ArgumentPassed}", tableConfig);
+            else
+            {
+                Log.Warning("Quality check timer elapsed but object passed could not be processed: {@ArgumentPassed}", tableConfig);
+            }
         }
 
         public abstract IList<SourceTableConfiguration> GetTableConfig();
 
-        public abstract void EnsureChangeTrackingIsConfigured();
+        public abstract void EnsureChangeTrackingIsConfigured(IEnumerable<SourceTableConfiguration> tables);
 
         public abstract void CommenceChangeTracking(IEnumerable<SourceTableConfiguration> tables);
 

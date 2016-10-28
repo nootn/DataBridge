@@ -1,4 +1,6 @@
-﻿namespace DataBridge.Core
+﻿using EnsureThat;
+
+namespace DataBridge.Core
 {
     public class TableSyncSettings
     {
@@ -9,10 +11,14 @@
         }
 
         public TableSyncSettings(ChangeDetectionModes changeDetectionMode, 
-            uint pollIntervalInMilliseconds, 
-            uint qualityCheckIntervalInMilliseconds,
-            uint qualityCheckRecordBatchSize)
+            int pollIntervalInMilliseconds, 
+            int qualityCheckIntervalInMilliseconds,
+            int qualityCheckRecordBatchSize)
         {
+            Ensure.That(() => pollIntervalInMilliseconds).IsGt(0);
+            Ensure.That(() => qualityCheckIntervalInMilliseconds).IsGt(0);
+            Ensure.That(() => qualityCheckRecordBatchSize).IsGt(0);
+
             ChangeDetectionMode = changeDetectionMode;
             PollIntervalInMilliseconds = pollIntervalInMilliseconds;
             QualityCheckIntervalInMilliseconds = qualityCheckIntervalInMilliseconds;
@@ -21,10 +27,10 @@
 
         public ChangeDetectionModes ChangeDetectionMode { get; }
 
-        public uint PollIntervalInMilliseconds { get; }
+        public int PollIntervalInMilliseconds { get; }
 
-        public uint QualityCheckIntervalInMilliseconds { get; }
+        public int QualityCheckIntervalInMilliseconds { get; }
 
-        public uint QualityCheckRecordBatchSize { get; }
+        public int QualityCheckRecordBatchSize { get; }
     }
 }

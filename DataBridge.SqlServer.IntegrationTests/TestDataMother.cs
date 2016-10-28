@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
-using System.Runtime.Remoting.Messaging;
+using DataBridge.Core;
 using DataBridge.SqlServer.Interface;
 using Moq;
 
@@ -20,17 +20,43 @@ namespace DataBridge.SqlServer.IntegrationTests
                 => ConfigurationManager.AppSettings["SourceDatabaseConnectionStringInvalidNotExists"];
         }
 
+        public static class SourceDatabaseChangeTrackingRetentionInDays
+        {
+            public static uint Valid => 1;
+        }
+
         public static class SourceTables
         {
             public static ISqlServerSourceTableCollection NoTables
             {
                 get
                 {
-                    var enumerator = new Mock<IEnumerator<ISqlServerSourceTable>>();
-                    enumerator.Setup(_ => _.MoveNext()).Returns(false);
+                    var items = new List<ISqlServerSourceTable>();
 
                     var collection = new Mock<ISqlServerSourceTableCollection>();
-                    collection.Setup(_ => _.GetEnumerator()).Returns(enumerator.Object);
+                    collection.Setup(_ => _.GetEnumerator()).Returns(items.GetEnumerator());
+
+                    return collection.Object;
+                }
+            }
+
+            public static ISqlServerSourceTableCollection OneValidTable
+            {
+                get
+                {
+                    var items = new List<ISqlServerSourceTable>();
+                    var validTable = new Mock<ISqlServerSourceTable>();
+                    validTable.Setup(_ => _.ChangeDetectionMode).Returns((int)TableSyncSettings.ChangeDetectionModes.AsSoonAsPossible);
+                    validTable.Setup(_ => _.Id).Returns("dbo.Test1");
+                    validTable.Setup(_ => _.Name).Returns("Test1");
+                    validTable.Setup(_ => _.PollIntervalInMilliseconds).Returns(1000 * 30);
+                    validTable.Setup(_ => _.QualityCheckIntervalInMilliseconds).Returns(1000 * 180);
+                    validTable.Setup(_ => _.QualityCheckRecordBatchSize).Returns(1);
+                    validTable.Setup(_ => _.Schema).Returns("dbo");
+                    items.Add(validTable.Object);
+
+                    var collection = new Mock<ISqlServerSourceTableCollection>();
+                    collection.Setup(_ => _.GetEnumerator()).Returns(items.GetEnumerator());
 
                     return collection.Object;
                 }

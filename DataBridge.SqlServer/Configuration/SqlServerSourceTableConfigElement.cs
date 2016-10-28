@@ -34,23 +34,23 @@ namespace DataBridge.SqlServer.Configuration
         }
 
         [ConfigurationProperty("pollIntervalInMilliseconds", IsKey = false, IsRequired = true)]
-        public uint PollIntervalInMilliseconds
+        public int PollIntervalInMilliseconds
         {
-            get { return (uint)base["pollIntervalInMilliseconds"]; }
+            get { return (int)base["pollIntervalInMilliseconds"]; }
             set { base["pollIntervalInMilliseconds"] = value; }
         }
 
         [ConfigurationProperty("qualityCheckIntervalInMilliseconds", IsKey = false, IsRequired = true)]
-        public uint QualityCheckIntervalInMilliseconds
+        public int QualityCheckIntervalInMilliseconds
         {
-            get { return (uint)base["qualityCheckIntervalInMilliseconds"]; }
+            get { return (int)base["qualityCheckIntervalInMilliseconds"]; }
             set { base["qualityCheckIntervalInMilliseconds"] = value; }
         }
 
         [ConfigurationProperty("qualityCheckRecordBatchSize", IsKey = false, IsRequired = true)]
-        public uint QualityCheckRecordBatchSize
+        public int QualityCheckRecordBatchSize
         {
-            get { return (uint)base["qualityCheckRecordBatchSize"]; }
+            get { return (int)base["qualityCheckRecordBatchSize"]; }
             set { base["qualityCheckRecordBatchSize"] = value; }
         }
     }

@@ -10,10 +10,10 @@
 
         int ChangeDetectionMode { get; }
 
-        uint PollIntervalInMilliseconds { get; }
+        int PollIntervalInMilliseconds { get; }
 
-        uint QualityCheckIntervalInMilliseconds { get; }
+        int QualityCheckIntervalInMilliseconds { get; }
 
-        uint QualityCheckRecordBatchSize { get; }
+        int QualityCheckRecordBatchSize { get; }
     }
 }

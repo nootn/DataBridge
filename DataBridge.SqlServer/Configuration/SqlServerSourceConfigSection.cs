@@ -12,6 +12,13 @@ namespace DataBridge.SqlServer.Configuration
             set { this["SourceDatabaseConnectionString"] = value; }
         }
 
+        [ConfigurationProperty("ChangeTrackingRetentionInitialValueInDays", IsRequired = true)]
+        public int ChangeTrackingRetentionInitialValueInDays
+        {
+            get { return (int)this["ChangeTrackingRetentionInitialValueInDays"]; }
+            set { this["ChangeTrackingRetentionInitialValueInDays"] = value; }
+        }
+
         [ConfigurationProperty("SourceTables", IsRequired = true, IsDefaultCollection = true)]
         public SqlServerSourceTableCollection SourceTables
         {
