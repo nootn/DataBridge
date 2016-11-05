@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using DataBridge.Core;
 using DataBridge.SqlServer.Interface;
+using Microsoft.SqlServer.Server;
 using Serilog;
 
 namespace DataBridge.SqlServer
@@ -12,6 +13,8 @@ namespace DataBridge.SqlServer
     {
         public static readonly string ExceptionMessageInvalidSourceDatabase =
             "Invalid Source Database";
+
+        public static readonly string ExceptionMessagePrefixTableNotExists = "Cannot find table";
 
         private readonly ISqlServerSource _config;
 
@@ -59,11 +62,19 @@ namespace DataBridge.SqlServer
 
                 var sourceDatabaseName = conn.Database;
 
-                SetChangeTrackingOnSourceDatabase(conn, sourceDatabaseName, _config.ChangeTrackingRetentionInitialValueInDays);
+                var setupTrackingOnDb = SqlRunner.SetChangeTrackingOnSourceDatabase(conn, sourceDatabaseName, _config.ChangeTrackingRetentionInitialValueInDays);
+                Log.Debug("{DatabaseName}: Action taken to setup tracking on database: {ActionTakenOnDb}", sourceDatabaseName, setupTrackingOnDb);
+
+                foreach (var currTable in tables)
+                {
+                    var setupTrackingOnTable = SqlRunner.SetChangeTrackingOnTable(currTable, conn);
+                    Log.Debug("{DatabaseName} - {TableId}: Action taken to setup tracking on table: {ActionTakenOnDb}", sourceDatabaseName, currTable.TableId, setupTrackingOnTable);
+                }
 
                 conn.Close();
             }
         }
+
 
         public override void CommenceChangeTracking(IEnumerable<SourceTableConfiguration> tables)
         {
@@ -74,28 +85,7 @@ namespace DataBridge.SqlServer
         }
 
 
-        private static void SetChangeTrackingOnSourceDatabase(SqlConnection conn, string sourceDatabaseName,
-            int numDaysRetentionInitialValue)
-        {
-            if (conn.State != ConnectionState.Open)
-            {
-                conn.Open();
-            }
+        
 
-            var cmdText = $@"
-IF NOT EXISTS 
-    (SELECT * FROM sys.change_tracking_databases 
-     WHERE database_id = DB_ID('@sourceDatabaseName')) 
-    BEGIN 
-        ALTER DATABASE [@sourceDatabaseName] 
-        SET CHANGE_TRACKING = ON 
-            (CHANGE_RETENTION = {numDaysRetentionInitialValue} DAYS, AUTO_CLEANUP = ON) 
-    END
-";
-
-            var cmd = new SqlCommand(cmdText, conn);
-            cmd.Parameters.AddWithValue("sourceDatabaseName", sourceDatabaseName);
-            cmd.ExecuteNonQuery();
-        }
     }
 }

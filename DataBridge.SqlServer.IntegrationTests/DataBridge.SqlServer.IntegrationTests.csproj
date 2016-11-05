@@ -74,8 +74,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlServerSourceDatabase\Process\_0030_WhenIHaveZeroDaysInitialRetention.cs" />
+    <Compile Include="SqlServerSourceDatabase\Process\_0040_WhenMyTableDoesNotExist.cs" />
     <Compile Include="SqlServerSourceDatabase\Process\_0020_WhenIHaveNoSourceDatabase.cs" />
     <Compile Include="SqlServerSourceDatabase\Process\_0010_WhenIHaveNoTables.cs" />
+    <Compile Include="TestDatabase.cs" />
     <Compile Include="TestDataMother.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -89,7 +92,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
