@@ -60,6 +60,8 @@ namespace DataBridge.SqlServer.IntegrationTests
                     validTable.Setup(_ => _.QualityCheckIntervalInMilliseconds).Returns(1000 * 180);
                     validTable.Setup(_ => _.QualityCheckRecordBatchSize).Returns(1);
                     validTable.Setup(_ => _.Schema).Returns("dbo");
+                    validTable.Setup(_ => _.PrimaryKeyColumn).Returns("Id");
+                    validTable.Setup(_ => _.LastUpdatedAtColumn).Returns("LastUpdatedOn");
                     items.Add(validTable.Object);
 
                     var collection = new Mock<ISqlServerSourceTableCollection>();
@@ -82,6 +84,8 @@ namespace DataBridge.SqlServer.IntegrationTests
                     validTable.Setup(_ => _.QualityCheckIntervalInMilliseconds).Returns(1000 * 180);
                     validTable.Setup(_ => _.QualityCheckRecordBatchSize).Returns(1);
                     validTable.Setup(_ => _.Schema).Returns("dbo");
+                    validTable.Setup(_ => _.PrimaryKeyColumn).Returns("Id");
+                    validTable.Setup(_ => _.LastUpdatedAtColumn).Returns("LastUpdatedOn");
                     items.Add(validTable.Object);
 
                     var collection = new Mock<ISqlServerSourceTableCollection>();

@@ -15,5 +15,9 @@
         int QualityCheckIntervalInMilliseconds { get; }
 
         int QualityCheckRecordBatchSize { get; }
+
+        string PrimaryKeyColumn { get; }
+
+        string LastUpdatedAtColumn { get; }
     }
 }

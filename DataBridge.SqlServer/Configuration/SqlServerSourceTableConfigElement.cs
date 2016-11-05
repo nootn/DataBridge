@@ -53,5 +53,19 @@ namespace DataBridge.SqlServer.Configuration
             get { return (int)base["qualityCheckRecordBatchSize"]; }
             set { base["qualityCheckRecordBatchSize"] = value; }
         }
+
+        [ConfigurationProperty("primaryKeyColumn", IsKey = false, IsRequired = true)]
+        public string PrimaryKeyColumn
+        {
+            get { return (string)base["primaryKeyColumn"]; }
+            set { base["primaryKeyColumn"] = value; }
+        }
+
+        [ConfigurationProperty("lastUpdatedAtColumn", IsKey = false, IsRequired = true)]
+        public string LastUpdatedAtColumn
+        {
+            get { return (string)base["lastUpdatedAtColumn"]; }
+            set { base["lastUpdatedAtColumn"] = value; }
+        }
     }
 }

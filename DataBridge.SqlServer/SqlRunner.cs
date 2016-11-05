@@ -19,9 +19,9 @@ namespace DataBridge.SqlServer
         public static ActionTaken SetChangeTrackingOnSourceDatabase(SqlConnection conn, string sourceDatabaseName,
             int numDaysRetentionInitialValue)
         {
-            Ensure.That(conn).IsNotNull();
-            Ensure.That(sourceDatabaseName).IsNotNullOrWhiteSpace();
-            Ensure.That(numDaysRetentionInitialValue).IsGt(0);
+            Ensure.That(() => conn).IsNotNull();
+            Ensure.That(() => sourceDatabaseName).IsNotNullOrWhiteSpace();
+            Ensure.That(() => numDaysRetentionInitialValue).IsGt(0);
 
             if (conn.State != ConnectionState.Open)
             {
@@ -54,8 +54,8 @@ SELECT @actionTaken
         
         public static ActionTaken SetChangeTrackingOnTable(SourceTableConfiguration currTable, SqlConnection conn)
         {
-            Ensure.That(currTable).IsNotNull();
-            Ensure.That(conn).IsNotNull();
+            Ensure.That(() => currTable).IsNotNull();
+            Ensure.That(() => conn).IsNotNull();
 
             if (conn.State != ConnectionState.Open)
             {

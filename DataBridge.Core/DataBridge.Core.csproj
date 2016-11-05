@@ -55,9 +55,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColumnConfiguration.cs" />
+    <Compile Include="Interface\IDestinationOfData.cs" />
     <Compile Include="SourceTableConfiguration.cs" />
     <Compile Include="SourceDatabaseBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TableRowData.cs" />
     <Compile Include="TableSyncSettings.cs" />
   </ItemGroup>
   <ItemGroup>

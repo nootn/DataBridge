@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using DataBridge.Core;
 using DataBridge.SqlServer.Interface;
-using Microsoft.SqlServer.Server;
 using Serilog;
 
 namespace DataBridge.SqlServer
@@ -40,7 +38,9 @@ namespace DataBridge.SqlServer
                             (TableSyncSettings.ChangeDetectionModes) configSourceTable.ChangeDetectionMode,
                             configSourceTable.PollIntervalInMilliseconds,
                             configSourceTable.QualityCheckIntervalInMilliseconds,
-                            configSourceTable.QualityCheckRecordBatchSize)));
+                            configSourceTable.QualityCheckRecordBatchSize),
+                        configSourceTable.PrimaryKeyColumn,
+                        configSourceTable.LastUpdatedAtColumn));
                 }
             }
 
@@ -62,30 +62,32 @@ namespace DataBridge.SqlServer
 
                 var sourceDatabaseName = conn.Database;
 
-                var setupTrackingOnDb = SqlRunner.SetChangeTrackingOnSourceDatabase(conn, sourceDatabaseName, _config.ChangeTrackingRetentionInitialValueInDays);
-                Log.Debug("{DatabaseName}: Action taken to setup tracking on database: {ActionTakenOnDb}", sourceDatabaseName, setupTrackingOnDb);
+                var setupTrackingOnDb = SqlRunner.SetChangeTrackingOnSourceDatabase(conn, sourceDatabaseName,
+                    _config.ChangeTrackingRetentionInitialValueInDays);
+                Log.Debug("{DatabaseName}: Action taken to setup tracking on database: {ActionTakenOnDb}",
+                    sourceDatabaseName, setupTrackingOnDb);
 
                 foreach (var currTable in tables)
                 {
                     var setupTrackingOnTable = SqlRunner.SetChangeTrackingOnTable(currTable, conn);
-                    Log.Debug("{DatabaseName} - {TableId}: Action taken to setup tracking on table: {ActionTakenOnDb}", sourceDatabaseName, currTable.TableId, setupTrackingOnTable);
+                    Log.Debug("{DatabaseName} - {TableId}: Action taken to setup tracking on table: {ActionTakenOnDb}",
+                        sourceDatabaseName, currTable.TableId, setupTrackingOnTable);
                 }
 
                 conn.Close();
             }
         }
 
+        public override void CommmenceTrackingChanges(SourceTableConfiguration table)
+        {
+        }
 
-        public override void CommenceChangeTracking(IEnumerable<SourceTableConfiguration> tables)
+        public override void PollForChanges(SourceTableConfiguration table)
         {
         }
 
         public override void RunQualityCheck(SourceTableConfiguration table)
         {
         }
-
-
-        
-
     }
 }
