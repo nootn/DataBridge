@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\SqlConnectionExtensions.cs" />
     <Compile Include="Interface\ISqlDatabaseConnectionString.cs" />
     <Compile Include="Interface\ISqlServerSourceTable.cs" />
     <Compile Include="Configuration\SqlServerSourceTableCollection.cs" />

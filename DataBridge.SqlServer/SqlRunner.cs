@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using DataBridge.Core;
+using DataBridge.SqlServer.Extensions;
 using EnsureThat;
 
 namespace DataBridge.SqlServer
@@ -23,10 +24,7 @@ namespace DataBridge.SqlServer
             Ensure.That(() => sourceDatabaseName).IsNotNullOrWhiteSpace();
             Ensure.That(() => numDaysRetentionInitialValue).IsGt(0);
 
-            if (conn.State != ConnectionState.Open)
-            {
-                conn.Open();
-            }
+            conn.EnsureOpen();
 
             var cmdText = $@"
 DECLARE @actionTaken INT
@@ -57,10 +55,7 @@ SELECT @actionTaken
             Ensure.That(() => currTable).IsNotNull();
             Ensure.That(() => conn).IsNotNull();
 
-            if (conn.State != ConnectionState.Open)
-            {
-                conn.Open();
-            }
+            conn.EnsureOpen();
 
             var cmdText = $@"
 DECLARE @actionTaken INT
