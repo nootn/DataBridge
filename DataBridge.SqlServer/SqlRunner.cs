@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Data.SqlClient;
 using DataBridge.Core;
 using DataBridge.SqlServer.Extensions;
@@ -11,11 +10,12 @@ namespace DataBridge.SqlServer
     {
         public enum ActionTaken
         {
-            Error = -1,
             Unknown = 0,
             Successful = 1,
             None = 2
         }
+
+        private const int ActionTakenErrorTableNotFound = -1;
 
         public static ActionTaken SetChangeTrackingOnSourceDatabase(SqlConnection conn, string sourceDatabaseName,
             int numDaysRetentionInitialValue)
@@ -28,7 +28,7 @@ namespace DataBridge.SqlServer
 
             var cmdText = $@"
 DECLARE @actionTaken INT
-SET @actionTaken = {(int)ActionTaken.Unknown}
+SET @actionTaken = {(int) ActionTaken.Unknown}
 IF NOT EXISTS 
     (SELECT * FROM sys.change_tracking_databases 
      WHERE database_id = DB_ID('@sourceDatabaseName')) 
@@ -36,11 +36,11 @@ IF NOT EXISTS
         ALTER DATABASE [{sourceDatabaseName}] 
         SET CHANGE_TRACKING = ON 
             (CHANGE_RETENTION = {numDaysRetentionInitialValue} DAYS, AUTO_CLEANUP = ON) 
-        SET @actionTaken = {(int)ActionTaken.Successful}
+        SET @actionTaken = {(int) ActionTaken.Successful}
     END
 ELSE
     BEGIN
-        SET @actionTaken = {(int)ActionTaken.None}
+        SET @actionTaken = {(int) ActionTaken.None}
     END
 SELECT @actionTaken
 ";
@@ -49,7 +49,7 @@ SELECT @actionTaken
             var res = Convert.ToInt32(cmd.ExecuteScalar());
             return (ActionTaken) res;
         }
-        
+
         public static ActionTaken SetChangeTrackingOnTable(SourceTableConfiguration currTable, SqlConnection conn)
         {
             Ensure.That(() => currTable).IsNotNull();
@@ -59,14 +59,14 @@ SELECT @actionTaken
 
             var cmdText = $@"
 DECLARE @actionTaken INT
-SET @actionTaken = {(int)ActionTaken.Unknown}
+SET @actionTaken = {(int) ActionTaken.Unknown}
 IF NOT EXISTS
     (SELECT sys.tables.name
      FROM sys.tables JOIN 
      sys.schemas ON sys.schemas.schema_id = sys.tables.schema_id 
      WHERE sys.tables.name = '@sourceTableName' AND sys.schemas.name = '@sourceSchemaName') 
     BEGIN
-        SET @actionTaken = {(int)ActionTaken.Error}
+        SET @actionTaken = {ActionTakenErrorTableNotFound}
     END
 ELSE
     BEGIN
@@ -80,11 +80,11 @@ ELSE
                 ALTER TABLE [{currTable.SchemaName}].[{currTable.TableName}] 
                 ENABLE CHANGE_TRACKING WITH 
                     (TRACK_COLUMNS_UPDATED = OFF)
-                SET @actionTaken = {(int)ActionTaken.Successful}
+                SET @actionTaken = {(int) ActionTaken.Successful}
             END
         ELSE
             BEGIN
-                SET @actionTaken = {(int)ActionTaken.None}
+                SET @actionTaken = {(int) ActionTaken.None}
             END
     END
 SELECT @actionTaken
@@ -96,12 +96,13 @@ SELECT @actionTaken
 
             var res = Convert.ToInt32(cmd.ExecuteScalar());
 
-            if (res == (int)ActionTaken.Error)
+            if (res == ActionTakenErrorTableNotFound)
             {
-                throw new ApplicationException($"{SqlServerSourceDatabase.ExceptionMessagePrefixTableNotExists} - [{currTable.SchemaName}].[{currTable.TableName}]");
+                throw new ApplicationException(
+                    $"{SqlServerSourceDatabase.ExceptionMessagePrefixTableNotExists} - [{currTable.SchemaName}].[{currTable.TableName}]");
             }
 
-            return (ActionTaken)res;
+            return (ActionTaken) res;
         }
     }
 }
