@@ -1,4 +1,6 @@
-﻿namespace DataBridge.SqlServer.Interface
+﻿using DataBridge.SqlServer.Configuration;
+
+namespace DataBridge.SqlServer.Interface
 {
     public interface ISqlServerSourceTable
     {
@@ -19,5 +21,9 @@
         string PrimaryKeyColumn { get; }
 
         string LastUpdatedAtColumn { get; }
+
+        IBasicConfigElementCollection ColumnsToInclude { get; }
+
+        IBasicConfigElementCollection ColumnsToIgnore { get; }
     }
 }

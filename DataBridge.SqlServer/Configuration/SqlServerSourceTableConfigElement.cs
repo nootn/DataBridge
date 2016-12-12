@@ -67,5 +67,23 @@ namespace DataBridge.SqlServer.Configuration
             get { return (string)base["lastUpdatedAtColumn"]; }
             set { base["lastUpdatedAtColumn"] = value; }
         }
+
+        [ConfigurationProperty("ColumnsToInclude", IsRequired = true, IsDefaultCollection = true)]
+        public BasicConfigElementCollection ColumnsToInclude
+        {
+            get { return (BasicConfigElementCollection)this["ColumnsToInclude"]; }
+            set { this["ColumnsToInclude"] = value; }
+        }
+
+        [ConfigurationProperty("ColumnsToIgnore", IsRequired = true, IsDefaultCollection = false)]
+        public BasicConfigElementCollection ColumnsToIgnore
+        {
+            get { return (BasicConfigElementCollection)this["ColumnsToIgnore"]; }
+            set { this["ColumnsToIgnore"] = value; }
+        }
+        
+        IBasicConfigElementCollection ISqlServerSourceTable.ColumnsToInclude => ColumnsToInclude;
+
+        IBasicConfigElementCollection ISqlServerSourceTable.ColumnsToIgnore => ColumnsToIgnore;
     }
 }

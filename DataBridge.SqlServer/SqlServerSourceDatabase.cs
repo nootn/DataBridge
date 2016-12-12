@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using DataBridge.Core;
 using DataBridge.SqlServer.Interface;
 using Serilog;
@@ -35,12 +36,14 @@ namespace DataBridge.SqlServer
                     config.Add(new SourceTableConfiguration(configSourceTable.Schema,
                         configSourceTable.Name,
                         new TableSyncSettings(
-                            (TableSyncSettings.ChangeDetectionModes) configSourceTable.ChangeDetectionMode,
+                            (TableSyncSettings.ChangeDetectionModes)configSourceTable.ChangeDetectionMode,
                             configSourceTable.PollIntervalInMilliseconds,
                             configSourceTable.QualityCheckIntervalInMilliseconds,
                             configSourceTable.QualityCheckRecordBatchSize),
                         configSourceTable.PrimaryKeyColumn,
-                        configSourceTable.LastUpdatedAtColumn));
+                        configSourceTable.LastUpdatedAtColumn,
+                        configSourceTable.ColumnsToInclude?.Select(_ => _.Name).ToArray(),
+                        configSourceTable.ColumnsToIgnore?.Select(_ => _.Name).ToArray()));
                 }
             }
 
