@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using DataBridge.Core;
 using DataBridge.Core.Interface;
 using DataBridge.SqlServer.Interface;
@@ -9,7 +10,7 @@ using Serilog;
 
 namespace DataBridge.SqlServer
 {
-    public class SqlServerSourceDatabase : SourceDatabaseBase
+    public class SqlServerSourceDatabase : SourceDatabaseBase, IDisposable
     {
         public static readonly string ExceptionMessageInvalidSourceDatabase =
             "Invalid Source Database";
@@ -18,6 +19,8 @@ namespace DataBridge.SqlServer
 
         private readonly ISqlServerSource _config;
         private readonly IDestinationOfData _destination;
+
+        private List<SqlChangeDetector> _detectors = new List<SqlChangeDetector>();
 
         public SqlServerSourceDatabase(ILogger log, ISqlServerSource config, IDestinationOfData destination)
         {
@@ -90,7 +93,8 @@ namespace DataBridge.SqlServer
         public override void CommmenceTrackingChanges(SourceTableConfiguration table)
         {
             var detector = new SqlChangeDetector(_config.SourceDatabaseConnectionString.Value,
-                table, _destination, Log.ForContext<SqlChangeDetector>());
+                table, _destination, Log);
+            _detectors.Add(detector);
             detector.CommenceTracking();
         }
 
@@ -100,6 +104,14 @@ namespace DataBridge.SqlServer
 
         public override void RunQualityCheck(SourceTableConfiguration table)
         {
+        }
+
+        public void Dispose()
+        {
+            foreach (var currDetector in _detectors)
+            {
+                currDetector.CancelWork();
+            }
         }
     }
 }

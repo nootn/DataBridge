@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 
 namespace DataBridge.SqlServer.IntegrationTests
 {
@@ -93,6 +94,20 @@ LastUpdatedOnUtc DATETIME NOT NULL,
 Name varchar(255),
 DateOfBirthUtc DATETIME
 )"
+                    , dbConn);
+                cmd.ExecuteNonQuery();
+                dbConn.Close();
+            }
+        }
+
+        public static void InsertOneRowIntoTableOne(string dbConnString)
+        {
+            using (var dbConn = new SqlConnection(dbConnString))
+            {
+                dbConn.Open();
+                var cmd = new SqlCommand($@"
+INSERT INTO TableOne (LastUpdatedOnUtc, Name, DateOfBirthUtc)
+VALUES ('{DateTime.UtcNow.ToString("yyyy-MM-dd HH:m:ss", DateTimeFormatInfo.CurrentInfo)}', 'One', '2000-01-01 13:00:00')"
                     , dbConn);
                 cmd.ExecuteNonQuery();
                 dbConn.Close();

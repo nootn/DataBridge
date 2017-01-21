@@ -66,6 +66,7 @@ namespace DataBridge.SqlServer.IntegrationTests
                     validTable.Setup(_ => _.QualityCheckRecordBatchSize).Returns(1);
                     validTable.Setup(_ => _.Schema).Returns("dbo");
                     validTable.Setup(_ => _.PrimaryKeyColumn).Returns(validIncludeCols.Object.First().Name);
+                    validTable.Setup(_ => _.PrimaryKeyColumnIsNumber).Returns(true);
                     validTable.Setup(_ => _.LastUpdatedAtColumn).Returns(validIncludeCols.Object.Skip(1).First().Name);
                     validTable.Setup(_ => _.ColumnsToInclude).Returns(validIncludeCols.Object);
                     items.Add(validTable.Object);
@@ -95,6 +96,7 @@ namespace DataBridge.SqlServer.IntegrationTests
                     validTable.Setup(_ => _.QualityCheckRecordBatchSize).Returns(1);
                     validTable.Setup(_ => _.Schema).Returns("dbo");
                     validTable.Setup(_ => _.PrimaryKeyColumn).Returns(validIncludeCols.Object.First().Name);
+                    validTable.Setup(_ => _.PrimaryKeyColumnIsNumber).Returns(true);
                     validTable.Setup(_ => _.LastUpdatedAtColumn).Returns(validIncludeCols.Object.Skip(1).First().Name);
                     validTable.Setup(_ => _.ColumnsToInclude).Returns(validIncludeCols.Object);
                     items.Add(validTable.Object);

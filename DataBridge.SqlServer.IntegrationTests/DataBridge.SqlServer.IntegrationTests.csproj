@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerSourceDatabase\Process\_0030_WhenIHaveZeroDaysInitialRetention.cs" />
+    <Compile Include="SqlServerSourceDatabase\Process\_0060_WhenIUseChangeDetectAndInsertOneRecord.cs" />
     <Compile Include="SqlServerSourceDatabase\Process\_0050_WhenIUseChangeDetectAndNoDataChanges.cs" />
     <Compile Include="SqlServerSourceDatabase\Process\_0040_WhenMyTableDoesNotExist.cs" />
     <Compile Include="SqlServerSourceDatabase\Process\_0020_WhenIHaveNoSourceDatabase.cs" />
