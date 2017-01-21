@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using DataBridge.Core;
+using DataBridge.Core.Interface;
 using DataBridge.SqlServer.Interface;
 using Serilog;
 
@@ -16,10 +17,12 @@ namespace DataBridge.SqlServer
         public static readonly string ExceptionMessagePrefixTableNotExists = "Cannot find table";
 
         private readonly ISqlServerSource _config;
+        private readonly IDestinationOfData _destination;
 
-        public SqlServerSourceDatabase(ILogger log, ISqlServerSource config)
+        public SqlServerSourceDatabase(ILogger log, ISqlServerSource config, IDestinationOfData destination)
         {
             _config = config;
+            _destination = destination;
             Log = log;
         }
 
@@ -41,6 +44,7 @@ namespace DataBridge.SqlServer
                             configSourceTable.QualityCheckIntervalInMilliseconds,
                             configSourceTable.QualityCheckRecordBatchSize),
                         configSourceTable.PrimaryKeyColumn,
+                        configSourceTable.PrimaryKeyColumnIsNumber,
                         configSourceTable.LastUpdatedAtColumn,
                         configSourceTable.ColumnsToInclude?.Select(_ => _.Name).ToArray(),
                         configSourceTable.ColumnsToIgnore?.Select(_ => _.Name).ToArray()));
@@ -79,10 +83,15 @@ namespace DataBridge.SqlServer
 
                 conn.Close();
             }
+
+            SqlDependency.Start(_config.SourceDatabaseConnectionString.Value);
         }
 
         public override void CommmenceTrackingChanges(SourceTableConfiguration table)
         {
+            var detector = new SqlChangeDetector(_config.SourceDatabaseConnectionString.Value,
+                table, _destination, Log.ForContext<SqlChangeDetector>());
+            detector.CommenceTracking();
         }
 
         public override void PollForChanges(SourceTableConfiguration table)

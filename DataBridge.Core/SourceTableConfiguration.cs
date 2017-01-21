@@ -4,8 +4,9 @@ namespace DataBridge.Core
 {
     public class SourceTableConfiguration
     {
+
         public SourceTableConfiguration(string schemaName, string tableName, TableSyncSettings syncSettings, 
-            string primaryKeyColumn, string lastUpdatedAtColumn, string[] columnsToInclude, string[] columnsToIgnore)
+            string primaryKeyColumn, bool primaryKeyColumnIsNumber, string lastUpdatedAtColumn, string[] columnsToInclude, string[] columnsToIgnore)
         {
             Ensure.That(() => schemaName).IsNotNullOrWhiteSpace();
             Ensure.That(() => tableName).IsNotNullOrWhiteSpace();
@@ -20,6 +21,7 @@ namespace DataBridge.Core
             TableName = tableName;
             SyncSettings = syncSettings;
             PrimaryKeyColumn = primaryKeyColumn;
+            PrimaryKeyColumnIsNumber = primaryKeyColumnIsNumber;
             LastUpdatedAtColumn = lastUpdatedAtColumn;
             ColumnsToInclude = columnsToInclude;
             ColumnsToIgnore = columnsToIgnore;
@@ -34,6 +36,8 @@ namespace DataBridge.Core
         public string TableId => string.Concat(SchemaName, ".", TableName);
 
         public string PrimaryKeyColumn { get; }
+
+        public bool PrimaryKeyColumnIsNumber { get; }
 
         public string LastUpdatedAtColumn { get; }
 

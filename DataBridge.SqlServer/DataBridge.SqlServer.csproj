@@ -69,6 +69,7 @@
     <Compile Include="Interface\IBasicConfigElementCollection.cs" />
     <Compile Include="Interface\ISqlServerSourceTableCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlChangeDetector.cs" />
     <Compile Include="SqlRunner.cs" />
     <Compile Include="SqlServerSourceDatabase.cs" />
   </ItemGroup>

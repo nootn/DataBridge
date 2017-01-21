@@ -20,10 +20,13 @@ namespace DataBridge.SqlServer.Interface
 
         string PrimaryKeyColumn { get; }
 
+        bool PrimaryKeyColumnIsNumber { get; }
+
         string LastUpdatedAtColumn { get; }
 
         IBasicConfigElementCollection ColumnsToInclude { get; }
 
         IBasicConfigElementCollection ColumnsToIgnore { get; }
+        
     }
 }

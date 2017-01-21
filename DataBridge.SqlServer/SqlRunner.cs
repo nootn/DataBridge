@@ -64,7 +64,7 @@ IF NOT EXISTS
     (SELECT sys.tables.name
      FROM sys.tables JOIN 
      sys.schemas ON sys.schemas.schema_id = sys.tables.schema_id 
-     WHERE sys.tables.name = '@sourceTableName' AND sys.schemas.name = '@sourceSchemaName') 
+     WHERE sys.tables.name = '{currTable.TableName}' AND sys.schemas.name = '{currTable.SchemaName}') 
     BEGIN
         SET @actionTaken = {ActionTakenErrorTableNotFound}
     END
@@ -75,7 +75,7 @@ ELSE
              FROM sys.change_tracking_tables JOIN 
              sys.tables ON sys.tables.object_id = sys.change_tracking_tables.object_id JOIN 
              sys.schemas ON sys.schemas.schema_id = sys.tables.schema_id 
-             WHERE sys.tables.name = '@sourceTableName' AND sys.schemas.name = '@sourceSchemaName') 
+             WHERE sys.tables.name = '{currTable.TableName}' AND sys.schemas.name = '{currTable.SchemaName}') 
             BEGIN 
                 ALTER TABLE [{currTable.SchemaName}].[{currTable.TableName}] 
                 ENABLE CHANGE_TRACKING WITH 
@@ -91,8 +91,6 @@ SELECT @actionTaken
 ";
 
             var cmd = new SqlCommand(cmdText, conn);
-            cmd.Parameters.AddWithValue("sourceTableName", currTable.TableName);
-            cmd.Parameters.AddWithValue("sourceSchemaName", currTable.SchemaName);
 
             var res = Convert.ToInt32(cmd.ExecuteScalar());
 

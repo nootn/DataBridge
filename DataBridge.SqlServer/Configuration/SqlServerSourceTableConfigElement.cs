@@ -61,6 +61,13 @@ namespace DataBridge.SqlServer.Configuration
             set { base["primaryKeyColumn"] = value; }
         }
 
+        [ConfigurationProperty("primaryKeyColumnIsNumber", IsKey = false, IsRequired = true)]
+        public bool PrimaryKeyColumnIsNumber
+        {
+            get { return (bool)base["primaryKeyColumnIsNumber"]; }
+            set { base["primaryKeyColumnIsNumber"] = value; }
+        }
+
         [ConfigurationProperty("lastUpdatedAtColumn", IsKey = false, IsRequired = true)]
         public string LastUpdatedAtColumn
         {

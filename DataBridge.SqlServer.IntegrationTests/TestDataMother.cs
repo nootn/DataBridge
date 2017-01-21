@@ -53,7 +53,7 @@ namespace DataBridge.SqlServer.IntegrationTests
                 get
                 {
                     var validIncludeCols =
-                        GetMockBasicConfigElementCollection(new[] { "Id", "LastUpdatedOn", "Name", "DateOfBirth" });
+                        GetMockBasicConfigElementCollection(new[] { "Id", "LastUpdatedOnUtc", "Name", "DateOfBirthUtc" });
 
                     var items = new List<ISqlServerSourceTable>();
                     var validTable = new Mock<ISqlServerSourceTable>();
@@ -82,14 +82,14 @@ namespace DataBridge.SqlServer.IntegrationTests
                 get
                 {
                     var validIncludeCols =
-                        GetMockBasicConfigElementCollection(new[] {"Id", "LastUpdatedOn", "Name", "DateOfBirth"});
+                        GetMockBasicConfigElementCollection(new[] {"Id", "LastUpdatedOnUtc", "Name", "DateOfBirthUtc"});
 
                     var items = new List<ISqlServerSourceTable>();
                     var validTable = new Mock<ISqlServerSourceTable>();
                     validTable.Setup(_ => _.ChangeDetectionMode)
                         .Returns((int) TableSyncSettings.ChangeDetectionModes.AsSoonAsPossible);
-                    validTable.Setup(_ => _.Id).Returns("dbo.Test1");
-                    validTable.Setup(_ => _.Name).Returns("Test1");
+                    validTable.Setup(_ => _.Id).Returns("dbo.TableOne");
+                    validTable.Setup(_ => _.Name).Returns("TableOne");
                     validTable.Setup(_ => _.PollIntervalInMilliseconds).Returns(1000*30);
                     validTable.Setup(_ => _.QualityCheckIntervalInMilliseconds).Returns(1000*180);
                     validTable.Setup(_ => _.QualityCheckRecordBatchSize).Returns(1);

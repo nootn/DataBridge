@@ -44,6 +44,7 @@ namespace DataBridge.SqlServer.IntegrationTests
             }
 
             CreateDatabase(msdbConnString, dbName);
+            CreateTableOne(dbConnString);
         }
 
         private static void CreateDatabase(string msdbConnString, string dbName)
@@ -76,6 +77,25 @@ namespace DataBridge.SqlServer.IntegrationTests
                 var msdbCmd = new SqlCommand($"DROP DATABASE [{dbName}]", msdbConn);
                 msdbCmd.ExecuteNonQuery();
                 msdbConn.Close();
+            }
+        }
+
+        private static void CreateTableOne(string dbConnString)
+        {
+            using (var dbConn = new SqlConnection(dbConnString))
+            {
+                dbConn.Open();
+                var cmd = new SqlCommand($@"
+CREATE TABLE TableOne
+(
+Id int IDENTITY(1,1) PRIMARY KEY,
+LastUpdatedOnUtc DATETIME NOT NULL,
+Name varchar(255),
+DateOfBirthUtc DATETIME
+)"
+                    , dbConn);
+                cmd.ExecuteNonQuery();
+                dbConn.Close();
             }
         }
     }
