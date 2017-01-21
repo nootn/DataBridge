@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using DataBridge.Core;
 using DataBridge.Core.Interface;
 using DataBridge.SqlServer.Interface;
 using Moq;
 using NUnit.Framework;
-using Should;
+using Serilog;
 using SpecsFor;
 
 namespace DataBridge.SqlServer.IntegrationTests.SqlServerSourceDatabase.Process
@@ -15,7 +14,9 @@ namespace DataBridge.SqlServer.IntegrationTests.SqlServerSourceDatabase.Process
     {
         protected override void Given()
         {
-            TestDatabase.EnsureCleanDatabaseExists(TestDataMother.SourceDatabaseConnectionString.Valid, TestDataMother.SourceMsdbDatabaseConnectionString.Valid);
+            SUT.OverrideLogger(Log.Logger);
+            TestDatabase.EnsureCleanDatabaseExists(TestDataMother.SourceDatabaseConnectionString.Valid,
+                TestDataMother.SourceMsdbDatabaseConnectionString.Valid);
 
             GetMockFor<ISqlServerSource>()
                 .Setup(_ => _.SourceTables)
@@ -40,7 +41,7 @@ namespace DataBridge.SqlServer.IntegrationTests.SqlServerSourceDatabase.Process
         public void then_one_change_is_detected_after_some_time()
         {
             var mockDest = GetMockFor<IDestinationOfData>();
-            
+
             var numTries = 5;
             for (var i = 1; i <= numTries; i++)
             {
@@ -49,7 +50,8 @@ namespace DataBridge.SqlServer.IntegrationTests.SqlServerSourceDatabase.Process
                     mockDest.Verify(
                         _ =>
                             _.PossibleChangesFound(It.IsAny<SourceTableConfiguration>(),
-                                It.Is<IList<TableRowData>>(cols=>cols.Count == 1 && cols[0].PrimaryKeyValue == "1")), Times.Once);
+                                It.Is<IList<TableRowData>>(cols => (cols.Count == 1) && (cols[0].PrimaryKeyValue == "1"))),
+                        Times.Once);
                 }
                 catch (MockException)
                 {
@@ -57,12 +59,8 @@ namespace DataBridge.SqlServer.IntegrationTests.SqlServerSourceDatabase.Process
                     {
                         throw;
                     }
-                    else
-                    {
-                        Thread.Sleep(1000);
-                    }
+                    Thread.Sleep(1000);
                 }
-                
             }
         }
     }

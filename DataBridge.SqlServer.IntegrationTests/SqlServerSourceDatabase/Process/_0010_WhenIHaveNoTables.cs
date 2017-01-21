@@ -2,6 +2,7 @@
 using DataBridge.Core;
 using DataBridge.SqlServer.Interface;
 using NUnit.Framework;
+using Serilog;
 using Should;
 using SpecsFor;
 
@@ -13,6 +14,7 @@ namespace DataBridge.SqlServer.IntegrationTests.SqlServerSourceDatabase.Process
 
         protected override void Given()
         {
+            SUT.OverrideLogger(Log.Logger);
             GetMockFor<ISqlServerSource>()
                 .Setup(_ => _.SourceTables)
                 .Returns(TestDataMother.SourceTables.NoTables);

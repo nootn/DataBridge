@@ -29,7 +29,14 @@ namespace DataBridge.SqlServer
             Log = log;
         }
 
-        public override ILogger Log { get; }
+        public override ILogger Log { get; protected set; }
+
+#if DEBUG
+        public void OverrideLogger(ILogger log)
+        {
+            Log = log;
+        }
+#endif
 
         public override IList<SourceTableConfiguration> GetTableConfig()
         {
@@ -74,13 +81,13 @@ namespace DataBridge.SqlServer
 
                 var setupTrackingOnDb = SqlRunner.SetChangeTrackingOnSourceDatabase(conn, sourceDatabaseName,
                     _config.ChangeTrackingRetentionInitialValueInDays);
-                Log.Debug("{DatabaseName}: Action taken to setup tracking on database: {ActionTakenOnDb}",
+                Log.Information("{DatabaseName}: Action taken to setup tracking on database: {ActionTakenOnDb}",
                     sourceDatabaseName, setupTrackingOnDb);
 
                 foreach (var currTable in tables)
                 {
                     var setupTrackingOnTable = SqlRunner.SetChangeTrackingOnTable(currTable, conn);
-                    Log.Debug("{DatabaseName} - {TableId}: Action taken to setup tracking on table: {ActionTakenOnDb}",
+                    Log.Information("{DatabaseName} - {TableId}: Action taken to setup tracking on table: {ActionTakenOnDb}",
                         sourceDatabaseName, currTable.TableId, setupTrackingOnTable);
                 }
 
@@ -93,7 +100,7 @@ namespace DataBridge.SqlServer
         public override void CommmenceTrackingChanges(SourceTableConfiguration table)
         {
             var detector = new SqlChangeDetector(_config.SourceDatabaseConnectionString.Value,
-                table, _destination, Log);
+                table, _destination, Log.ForContext<SqlChangeDetector>());
             _detectors.Add(detector);
             detector.CommenceTracking();
         }

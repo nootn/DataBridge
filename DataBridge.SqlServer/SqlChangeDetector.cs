@@ -69,7 +69,7 @@ SELECT CHANGE_TRACKING_CURRENT_VERSION()",
                 var command =
                     new SqlCommand(
                         $@" 
-SELECT MAX([{_table.LastUpdatedAtColumn}]) 
+SELECT {string.Join(",", _table.ColumnsToInclude.Select(colName => $"[{colName}]"))} 
 FROM [{_table.SchemaName}].[{_table.TableName}]",
                         conn))
             {
@@ -86,14 +86,14 @@ FROM [{_table.SchemaName}].[{_table.TableName}]",
             var syncVersionNow = syncVersion;
             if (_isBeingCancelled)
             {
-                _log.Warning("OnDependencyChange Cancelled - {SqlNotificationEventArgs} Sync Version: {SyncVersion}", e,
+                _log.Warning("OnDependencyChange Cancelled - {@SqlNotificationEventArgs} Sync Version: {SyncVersion}", e,
                     syncVersionNow);
             }
             else
             {
                 try
                 {
-                    _log.Debug("OnDependencyChange {SqlNotificationEventArgs} Sync Version: {SyncVersion}", e,
+                    _log.Information("OnDependencyChange {@SqlNotificationEventArgs} Sync Version: {SyncVersion}", e,
                         syncVersionNow);
 
                     var dependency = sender as SqlDependency;

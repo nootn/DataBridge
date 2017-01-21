@@ -6,6 +6,7 @@ using DataBridge.Core.Interface;
 using DataBridge.SqlServer.Interface;
 using Moq;
 using NUnit.Framework;
+using Serilog;
 using Should;
 using SpecsFor;
 
@@ -15,6 +16,7 @@ namespace DataBridge.SqlServer.IntegrationTests.SqlServerSourceDatabase.Process
     {
         protected override void Given()
         {
+            SUT.OverrideLogger(Log.Logger);
             TestDatabase.EnsureCleanDatabaseExists(TestDataMother.SourceDatabaseConnectionString.Valid, TestDataMother.SourceMsdbDatabaseConnectionString.Valid);
 
             GetMockFor<ISqlServerSource>()

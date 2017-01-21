@@ -15,14 +15,14 @@ namespace DataBridge.Core
         private readonly Dictionary<string, Timer> _tablePollTimers = new Dictionary<string, Timer>();
         private readonly Dictionary<string, Timer> _tableQualityCheckTimers = new Dictionary<string, Timer>();
 
-        public abstract ILogger Log { get; }
+        public abstract ILogger Log { get; protected set; }
 
         public void Process()
         {
-            Log.Debug("Starting Process()");
+            Log.Information("Starting Process()");
 
             var tables = GetTableConfig();
-            Log.Debug("Processing table(s) {@Tables}", tables);
+            Log.Information("Processing table(s) {@Tables}", tables);
 
             if ((tables == null) || !tables.Any())
             {
