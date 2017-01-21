@@ -5,16 +5,24 @@ namespace DataBridge.Core
 {
     public class TableRowData
     {
-        public TableRowData(string primaryKeyValue, string lastUpdatedAtValue,
+        public TableRowData(bool isBeingDeleted, string primaryKeyValue, string lastUpdatedAtValue,
             IList<KeyValuePair<string, object>> values)
         {
             Ensure.That(() => primaryKeyValue).IsNotNullOrWhiteSpace();
-            Ensure.That(() => lastUpdatedAtValue).IsNotNullOrWhiteSpace();
 
+            if (!isBeingDeleted)
+            {
+                Ensure.That(() => lastUpdatedAtValue).IsNotNullOrWhiteSpace();
+                Ensure.That(() => values).IsNotNull();
+            }
+            
+            IsBeingDeleted = isBeingDeleted;
             PrimaryKeyValue = primaryKeyValue;
             LastUpdatedAtValue = lastUpdatedAtValue;
             Values = values;
         }
+
+        public bool IsBeingDeleted { get; }
 
         public string PrimaryKeyValue { get; }
 

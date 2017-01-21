@@ -49,9 +49,9 @@ namespace DataBridge.SqlServer.IntegrationTests.SqlServerSourceDatabase.Process
                     mockDest.Verify(
                         _ =>
                             _.PossibleChangesFound(It.IsAny<SourceTableConfiguration>(),
-                                It.IsAny<List<TableRowData>>()), Times.Once);
+                                It.Is<IList<TableRowData>>(cols=>cols.Count == 1 && cols[0].PrimaryKeyValue == "1")), Times.Once);
                 }
-                catch (MockException ex)
+                catch (MockException)
                 {
                     if (i >= numTries)
                     {

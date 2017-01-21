@@ -99,7 +99,8 @@ FROM [{_table.SchemaName}].[{_table.TableName}]",
                     var dependency = sender as SqlDependency;
                     dependency.OnChange -= OnDependencyChange;
 
-                    var changes = new List<ChangeTrackingResult>();
+                    var insertsAndUpdates = new List<string>();
+                    var deletes = new List<string>();
 
                     using (var conn = new SqlConnection(_connectionString))
                     using (var command = new SqlCommand(
@@ -114,7 +115,14 @@ FROM CHANGETABLE(CHANGES [{_table.TableName}], @last_synchronization_version) AS
 
                         while (res.Read())
                         {
-                            changes.Add(new ChangeTrackingResult(res.GetString(0), res.GetString(1)));
+                            if (res.GetString(1) == "D")
+                            {
+                                deletes.Add(res.GetString(0));
+                            }
+                            else
+                            {
+                                insertsAndUpdates.Add(res.GetString(0));
+                            }
                         }
                         conn.Close();
                     }
@@ -123,7 +131,7 @@ FROM CHANGETABLE(CHANGES [{_table.TableName}], @last_synchronization_version) AS
 
                     DetectChangesOnTable();
 
-                    if (!changes.Any())
+                    if (!insertsAndUpdates.Any() && !deletes.Any())
                     {
                         _log.Warning("No changes were found in version {SyncVersion}", syncVersionNow);
                     }
@@ -134,11 +142,11 @@ FROM CHANGETABLE(CHANGES [{_table.TableName}], @last_synchronization_version) AS
                         string inClause;
                         if (_table.PrimaryKeyColumnIsNumber)
                         {
-                            inClause = string.Join(",", changes.Select(_ => _.Id));
+                            inClause = string.Join(",", insertsAndUpdates);
                         }
                         else
                         {
-                            inClause = "'" + string.Join("','", changes.Select(_ => _.Id)) + "'";
+                            inClause = "'" + string.Join("','", insertsAndUpdates) + "'";
                         }
 
                         var colsToIncludeWithoutIdAndLastUpdate =
@@ -173,10 +181,15 @@ WHERE {_table.PrimaryKeyColumn} IN ({inClause})",
                                     otherItems.Add(new KeyValuePair<string, object>(otherCol, rdr.GetValue(colIndex)));
                                     colIndex++;
                                 }
-                                rows.Add(new TableRowData(rdr.GetValue(0).ToString(), rdr.GetValue(1).ToString(),
+                                rows.Add(new TableRowData(false, rdr.GetValue(0).ToString(), rdr.GetValue(1).ToString(),
                                     otherItems));
                             }
                             conn.Close();
+                        }
+
+                        foreach (var currDelId in deletes)
+                        {
+                            rows.Add(new TableRowData(true, currDelId, null, null));
                         }
 
                         _destination.PossibleChangesFound(_table, rows);
@@ -194,22 +207,4 @@ WHERE {_table.PrimaryKeyColumn} IN ({inClause})",
         }
     }
 
-    internal class ChangeTrackingResult
-    {
-        public ChangeTrackingResult(string id, string operation)
-        {
-            Ensure.That(() => id).IsNotNullOrWhiteSpace();
-            Ensure.That(() => operation).IsNotNullOrWhiteSpace();
-            Id = id;
-            Operation = operation;
-        }
-
-        public string Id { get; set; }
-        public string Operation { get; set; }
-
-        public override string ToString()
-        {
-            return $"Id: {Id}; Operation: {Operation};";
-        }
-    }
 }
