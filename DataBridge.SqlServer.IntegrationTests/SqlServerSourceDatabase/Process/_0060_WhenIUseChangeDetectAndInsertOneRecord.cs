@@ -53,8 +53,9 @@ namespace DataBridge.SqlServer.IntegrationTests.SqlServerSourceDatabase.Process
                                 It.Is<IList<TableRowData>>(cols => (cols.Count == 1) && (cols[0].PrimaryKeyValue == "1"))),
                         Times.Once);
                 }
-                catch (MockException)
+                catch (MockException ex)
                 {
+                    Log.Warning(ex, $"Got exception on attempt number {i}");
                     if (i >= numTries)
                     {
                         throw;
